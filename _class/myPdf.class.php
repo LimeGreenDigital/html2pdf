@@ -22,6 +22,8 @@ class HTML2PDF_myPdf extends TCPDF
     // nb of segment to build a arc with bezier curv
     const ARC_NB_SEGMENT = 8;
 
+    static protected array $stringWidths = [];
+
     /**
      * class constructor
      *
@@ -599,7 +601,7 @@ class HTML2PDF_myPdf extends TCPDF
      *
      * @param float   $y
      * @param boolean $resetx Reset the X position
-     * @param boolean $rtloff 
+     * @param boolean $rtloff
      * @access public
      */
     public function SetY($y, $resetx=true, $rtloff=false)
@@ -1290,7 +1292,7 @@ class HTML2PDF_myPdf extends TCPDF
         $size=sizeof($this->outlines);
 
         // get the size of the "P. xx" cell
-        $pageCellSize=$this->GetStringWidth('p. '.$this->outlines[$size-1]['p'])+2;
+        $pageCellSize=$this->_GetStringWidth('p. '.$this->outlines[$size-1]['p'])+2;
 
         // Foreach bookmark
         for ($i=0;$i<$size;$i++) {
@@ -1306,11 +1308,11 @@ class HTML2PDF_myPdf extends TCPDF
 
             // Caption (cut to fit on the width page)
             $str=$this->outlines[$i]['t'];
-            $strsize=$this->GetStringWidth($str);
+            $strsize=$this->_GetStringWidth($str);
             $availableSize=$this->w-$this->lMargin-$this->rMargin-$pageCellSize-($level*8)-4;
             while ($strsize>=$availableSize) {
                 $str=substr($str, 0, -1);
-                $strsize=$this->GetStringWidth($str);
+                $strsize=$this->_GetStringWidth($str);
             }
 
             // if we want to display the page nmber
@@ -1320,7 +1322,7 @@ class HTML2PDF_myPdf extends TCPDF
 
                 //Filling dots
                 $w=$this->w-$this->lMargin-$this->rMargin-$pageCellSize-($level*8)-($strsize+2);
-                $nb=$w/$this->GetStringWidth('.');
+                $nb=$w/$this->_GetStringWidth('.');
                 $dots=str_repeat('.', $nb);
                 $this->Cell($w, $this->FontSize+2, $dots, 0, 0, 'R');
 
@@ -1429,5 +1431,11 @@ class HTML2PDF_myPdf extends TCPDF
     public function setMyLastPageGroupNb($myLastPageGroupNb)
     {
         $this->_myLastPageGroupNb = $myLastPageGroupNb;
+    }
+
+    public function _GetStringWidth($s, $fontname='', $fontstyle='', $fontsize=0, $getarray=false)
+    {
+        $fontKey = $this->getFontFamily() . $this->getFontStyle() . $this->getFontSize();
+        return self::$stringWidths[$fontKey][$s] ??= $this->GetStringWidth($s, $fontname, $fontstyle, $fontsize, $getarray);
     }
 }

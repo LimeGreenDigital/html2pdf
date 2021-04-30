@@ -72,12 +72,12 @@ class HTML2PDF_parsingCss
     }
 
     /**
-    * define the Default Font to use, if the font does not exist, or if no font asked
-    *
-    * @param  string  default font-family. If null : Arial for no font asked, and error fot ont does not exist
-    * @return string  old default font-family
-    * @access public
-    */
+     * define the Default Font to use, if the font does not exist, or if no font asked
+     *
+     * @param  string  default font-family. If null : Arial for no font asked, and error fot ont does not exist
+     * @return string  old default font-family
+     * @access public
+     */
     public function setDefaultFont($default = null)
     {
         $old = $this->_defaultFont;
@@ -86,7 +86,7 @@ class HTML2PDF_parsingCss
         return $old;
     }
 
-     /**
+    /**
      * Init the object
      *
      * @access protected
@@ -169,12 +169,25 @@ class HTML2PDF_parsingCss
     public function resetStyle($tagName = '')
     {
         // prepare somme values
-        $border = $this->readBorder('solid 1px #000000');
-        $units = array(
-            '1px' => $this->convertToMM('1px'),
-            '5px' => $this->convertToMM('5px'),
-        );
 
+        // No need to calculate readBorder values on the fly.
+//        $border = $this->readBorder('solid 1px #000000');
+        $border = [
+            'type' => 'solid',
+            'width' => 0.26458333333333,
+            'color' => [0.0, 0.0, 0.0],
+        ];
+
+        // No need to calculate convertToMM values on the fly.
+//        $units = array(
+//            '1px' => $this->convertToMM('1px'),
+//            '5px' => $this->convertToMM('5px'),
+//        );
+
+        $units = [
+            '1px' => 0.26458333333333,
+            '5px' => 1.3229166666667,
+        ];
 
         // prepare the Collapse attribute
         $collapse = isset($this->value['border']['collapse']) ? $this->value['border']['collapse'] : false;
@@ -196,10 +209,31 @@ class HTML2PDF_parsingCss
         $this->value['overflow']   = 'visible';
         $this->value['background'] = array('color' => null, 'image' => null, 'position' => null, 'repeat' => null);
         $this->value['border']     = array(
-            't' => $this->readBorder('none'),
-            'r' => $this->readBorder('none'),
-            'b' => $this->readBorder('none'),
-            'l' => $this->readBorder('none'),
+            't' => [
+                'type' => 'none',
+                'width' => 0,
+                'color' => [0, 0, 0],
+            ],
+            'r' => [
+                'type' => 'none',
+                'width' => 0,
+                'color' => [0, 0, 0],
+            ],
+            'b' => [
+                'type' => 'none',
+                'width' => 0,
+                'color' => [0, 0, 0],
+            ],
+            'l' => [
+                'type' => 'none',
+                'width' => 0,
+                'color' => [0, 0, 0],
+            ],
+            // No need to calculate readBorder values on the fly.
+//            't' => $this->readBorder('none'),
+//            'r' => $this->readBorder('none'),
+//            'b' => $this->readBorder('none'),
+//            'l' => $this->readBorder('none'),
             'radius' => array(
                 'tl' => array(0, 0),
                 'tr' => array(0, 0),
@@ -345,7 +379,7 @@ class HTML2PDF_parsingCss
             $this->_pdf->setFillColor(255);
     }
 
-     /**
+    /**
      * add a level in the CSS history
      *
      * @access public
@@ -355,7 +389,7 @@ class HTML2PDF_parsingCss
         array_push($this->table, $this->value);
     }
 
-     /**
+    /**
      * remove a level in the CSS history
      *
      * @access public
@@ -367,7 +401,7 @@ class HTML2PDF_parsingCss
         }
     }
 
-     /**
+    /**
      * restore the Y positiony (used after a span)
      *
      * @access public
@@ -377,7 +411,7 @@ class HTML2PDF_parsingCss
         if ($this->value['y']==$this->_pdf->getY()) $this->_pdf->setY($this->value['yc'], false);
     }
 
-     /**
+    /**
      * set the New position for the current Tag
      *
      * @access public
@@ -427,7 +461,7 @@ class HTML2PDF_parsingCss
         $this->_pdf->setXY($this->value['x'], $this->value['y']);
     }
 
-     /**
+    /**
      * Analise the CSS style to convert it into Form style
      *
      * @access public
@@ -466,7 +500,7 @@ class HTML2PDF_parsingCss
         return $prop;
     }
 
-     /**
+    /**
      * Analise the CSS style to convert it into SVG style
      *
      * @access public
@@ -675,8 +709,8 @@ class HTML2PDF_parsingCss
                     break;
 
                 case 'height': case 'max-height':
-                    $this->value[$nom] = $this->convertToMM($val, $this->getLastHeight());
-                    break;
+                $this->value[$nom] = $this->convertToMM($val, $this->getLastHeight());
+                break;
 
                 case 'line-height':
                     if (preg_match('/^[0-9\.]+$/isU', $val)) $val = floor($val*100).'%';
@@ -816,10 +850,10 @@ class HTML2PDF_parsingCss
                     $val = preg_replace('/,[\s]+/', ',', $val);
                     $val = explode(' ', $val);
                     foreach ($val as $valK => $valV) {
-                            $val[$valK] = $this->convertToColor($valV, $res);
-                            if (!$res) {
-                                $val[$valK] = null;
-                            }
+                        $val[$valK] = $this->convertToColor($valV, $res);
+                        if (!$res) {
+                            $val[$valK] = null;
+                        }
                     }
                     $this->_duplicateBorder($val);
                     if (is_array($val[0])) $this->value['border']['t']['color'] = $val[0];
@@ -856,7 +890,7 @@ class HTML2PDF_parsingCss
                 case 'border-width':
                     $val = explode(' ', $val);
                     foreach ($val as $valK => $valV) {
-                            $val[$valK] = $this->convertToMM($valV, 0);
+                        $val[$valK] = $this->convertToMM($valV, 0);
                     }
                     $this->_duplicateBorder($val);
                     if ($val[0]) $this->value['border']['t']['width'] = $val[0];
@@ -913,11 +947,11 @@ class HTML2PDF_parsingCss
                         $valV = $valH;
                     }
                     $this->value['border']['radius'] = array(
-                                'tl' => array($valH[0], $valV[0]),
-                                'tr' => array($valH[1], $valV[1]),
-                                'br' => array($valH[2], $valV[2]),
-                                'bl' => array($valH[3], $valV[3])
-                            );
+                        'tl' => array($valH[0], $valV[0]),
+                        'tr' => array($valH[1], $valV[1]),
+                        'br' => array($valH[2], $valV[2]),
+                        'bl' => array($valH[3], $valV[3])
+                    );
                     break;
 
                 case 'border-top-left-radius':
@@ -1082,7 +1116,7 @@ class HTML2PDF_parsingCss
         return $return;
     }
 
-     /**
+    /**
      * get the height of the current line
      *
      * @access public
@@ -1095,7 +1129,7 @@ class HTML2PDF_parsingCss
         return $this->convertToMM($val, $this->value['font-size']);
     }
 
-     /**
+    /**
      * get the width of the parent
      *
      * @access public
@@ -1117,7 +1151,7 @@ class HTML2PDF_parsingCss
         return $this->_pdf->getW() - $this->_pdf->getlMargin() - $this->_pdf->getrMargin();
     }
 
-     /**
+    /**
      * get the height of the parent
      *
      * @access public
@@ -1324,10 +1358,10 @@ class HTML2PDF_parsingCss
             // if the convert is ok => it is a width
             if ($tmp!==null) {
                 $width = $tmp;
-            // else, it could be the type
+                // else, it could be the type
             } else if (in_array($value, array('solid', 'dotted', 'dashed', 'double'))) {
                 $type = $value;
-            // else, it could be the color
+                // else, it could be the color
             } else {
                 $tmp = $this->convertToColor($value, $res);
                 if ($res) $color = $tmp;
@@ -1354,11 +1388,11 @@ class HTML2PDF_parsingCss
             $val[1] = $val[0];
             $val[2] = $val[0];
             $val[3] = $val[0];
-        // 2 values => L => R & T => B
+            // 2 values => L => R & T => B
         } else if (count($val)==2) {
             $val[2] = $val[0];
             $val[3] = $val[1];
-        // 3 values => T => B
+            // 3 values => T => B
         } else if (count($val)==3) {
             $val[3] = $val[1];
         }
@@ -1402,10 +1436,10 @@ class HTML2PDF_parsingCss
             // if ok => it is a color
             if ($ok) {
                 $value['color'] = $color;
-            // else if transparent => no coloàr
+                // else if transparent => no coloàr
             } else if ($val=='transparent') {
                 $value['color'] = null;
-            // else
+                // else
             } else {
                 // try to parse the value as a repeat
                 $repeat = $this->convertBackgroundRepeat($val);
@@ -1413,7 +1447,7 @@ class HTML2PDF_parsingCss
                 // if ok => it is repeat
                 if ($repeat) {
                     $value['repeat'] = $repeat;
-                // else => it could only be a position
+                    // else => it could only be a position
                 } else {
                     $pos.= ($pos ? ' ' : '').$val;
                 }
@@ -1534,7 +1568,7 @@ class HTML2PDF_parsingCss
         return null;
     }
 
-     /**
+    /**
      * convert a distance to mm
      *
      * @access public
