@@ -683,10 +683,10 @@ class HTML2PDF
     protected function _DEBUG_stepline($name, $timeTotal, $timeStep, $memoryUsage, $memoryPeak)
     {
         $txt = str_pad($name, 30, ' ', STR_PAD_RIGHT).
-            str_pad($timeTotal, 12, ' ', STR_PAD_LEFT).
-            str_pad($timeStep, 12, ' ', STR_PAD_LEFT).
-            str_pad($memoryUsage, 15, ' ', STR_PAD_LEFT).
-            str_pad($memoryPeak, 15, ' ', STR_PAD_LEFT);
+                str_pad($timeTotal, 12, ' ', STR_PAD_LEFT).
+                str_pad($timeStep, 12, ' ', STR_PAD_LEFT).
+                str_pad($memoryUsage, 15, ' ', STR_PAD_LEFT).
+                str_pad($memoryPeak, 15, ' ', STR_PAD_LEFT);
 
         echo '<pre style="padding:0; margin:0">'.$txt.'</pre>';
     }
@@ -1069,7 +1069,7 @@ class HTML2PDF
                 } else if ($digit==9) {
                     $nbRoman=$nbRoman.$nbBaseTen[$i].$nbBaseTen[$i+1];
                 } else if ($digit==4) {
-                    $nbRoman=$nbRoman.$nbBaseTen[$i].$nbBaseFive[$i];
+                $nbRoman=$nbRoman.$nbBaseTen[$i].$nbBaseFive[$i];
                 } else {
                     $nbRoman=$nbRoman.$nbBaseFive[$i];
                     for ($j=$digit-5; $j>=1; $j--) {
@@ -2212,7 +2212,7 @@ class HTML2PDF
                     // without colspan
                     if ($corr[$y][$x][2]==1) {
                         $cases[$corr[$y][$x][1]][$corr[$y][$x][0]]['w'] = $sw[$x];
-                        // with colspan
+                    // with colspan
                     } else {
                         $s = 0;
                         for ($i=0; $i<$corr[$y][$x][2]; $i++) {
@@ -2264,7 +2264,7 @@ class HTML2PDF
                     // without rowspan
                     if ($corr[$y][$x][3]==1) {
                         $cases[$corr[$y][$x][1]][$corr[$y][$x][0]]['h'] = $sh[$y];
-                        // with rowspan
+                    // with rowspan
                     } else {
                         $s = 0;
                         for ($i=0; $i<$corr[$y][$x][3]; $i++) {
@@ -2418,7 +2418,7 @@ class HTML2PDF
                 $form    = null;
             }
             $this->pdf->SetMyFooter($page, $date, $hour, $form);
-            // else => we use the last page set used
+        // else => we use the last page set used
         } else {
             $this->parsingCss->save();
             $this->parsingCss->analyse('PAGE', $param);
@@ -2821,14 +2821,14 @@ class HTML2PDF
             if (
                 $w < ($this->pdf->getW() - $this->pdf->getlMargin()-$this->pdf->getrMargin()) &&
                 $this->pdf->getX() + $w>=($this->pdf->getW() - $this->pdf->getrMargin())
-            )
+                )
                 $this->_tag_open_BR(array());
 
             if (
-                ($h < ($this->pdf->getH() - $this->pdf->gettMargin()-$this->pdf->getbMargin())) &&
-                ($this->pdf->getY() + $h>=($this->pdf->getH() - $this->pdf->getbMargin())) &&
-                !$this->_isInOverflow
-            )
+                    ($h < ($this->pdf->getH() - $this->pdf->gettMargin()-$this->pdf->getbMargin())) &&
+                    ($this->pdf->getY() + $h>=($this->pdf->getH() - $this->pdf->getbMargin())) &&
+                    !$this->_isInOverflow
+                )
                 $this->_setNewPage();
 
             $old = $this->parsingCss->getOldValues();
@@ -3228,9 +3228,9 @@ class HTML2PDF
         $size = max($w, $h); if (!$size) $size = $this->parsingCss->ConvertToMM('50mm');
 
         $style = array(
-            'fgcolor' => $this->parsingCss->value['color'],
-            'bgcolor' => $this->parsingCss->value['background']['color'],
-        );
+                'fgcolor' => $this->parsingCss->value['color'],
+                'bgcolor' => $this->parsingCss->value['background']['color'],
+            );
 
         if ($borders) {
             $style['border'] = true;
@@ -3352,10 +3352,10 @@ class HTML2PDF
         $w = 0;
         $words = explode(' ', $txt);
         foreach ($words as $k => $word) {
-            $words[$k] = array($word, $this->pdf->_GetStringWidth($word));
+            $words[$k] = array($word, $this->pdf->GetStringWidth($word));
             $w+= $words[$k][1];
         }
-        $space = $this->pdf->_GetStringWidth(' ');
+        $space = $this->pdf->GetStringWidth(' ');
         $w+= $space*(count($words)-1);
 
         // position in the text
@@ -4202,7 +4202,7 @@ class HTML2PDF
         $this->parsingCss->setPosition();
         $this->parsingCss->fontSet();
 
-        // cancel the effects of the setPosition
+         // cancel the effects of the setPosition
         $this->pdf->setXY($this->pdf->getX()-$this->parsingCss->value['margin']['l'], $this->pdf->getY()-$this->parsingCss->value['margin']['t']);
 
         list($mL, $mR) = $this->_getMargins($this->pdf->getY());
@@ -5283,7 +5283,7 @@ class HTML2PDF
                 HTML2PDF::$_tables[$param['num']]['td_curr'] = $tmpTD;
                 HTML2PDF::$_tables[$param['num']]['new_page'] = true;
             }
-            // else (in a sub HTML)
+        // else (in a sub HTML)
         } else {
             // prepare it
             HTML2PDF::$_tables[$param['num']]['cases'][HTML2PDF::$_tables[$param['num']]['tr_curr']-1] = array();
@@ -5499,8 +5499,8 @@ class HTML2PDF
             for ($j=0; $j<$rowspan; $j++) {
                 for ($i=0; $i<$colspan; $i++) {
                     HTML2PDF::$_tables[$param['num']]['corr']
-                    [HTML2PDF::$_tables[$param['num']]['corr_y']+$j]
-                    [HTML2PDF::$_tables[$param['num']]['corr_x']+$i] = ($i+$j>0) ? '' : array($x,$y,$colspan,$rowspan);
+                        [HTML2PDF::$_tables[$param['num']]['corr_y']+$j]
+                        [HTML2PDF::$_tables[$param['num']]['corr_x']+$i] = ($i+$j>0) ? '' : array($x,$y,$colspan,$rowspan);
                 }
             }
             HTML2PDF::$_tables[$param['num']]['corr_x']+= $colspan;
@@ -6029,14 +6029,14 @@ class HTML2PDF
             if (
                 $w < ($this->pdf->getW() - $this->pdf->getlMargin()-$this->pdf->getrMargin()) &&
                 $this->pdf->getX() + $w>=($this->pdf->getW() - $this->pdf->getrMargin())
-            )
+                )
                 $this->_tag_open_BR(array());
 
             if (
-                ($h < ($this->pdf->getH() - $this->pdf->gettMargin()-$this->pdf->getbMargin())) &&
-                ($this->pdf->getY() + $h>=($this->pdf->getH() - $this->pdf->getbMargin())) &&
-                !$this->_isInOverflow
-            )
+                    ($h < ($this->pdf->getH() - $this->pdf->gettMargin()-$this->pdf->getbMargin())) &&
+                    ($this->pdf->getY() + $h>=($this->pdf->getH() - $this->pdf->getbMargin())) &&
+                    !$this->_isInOverflow
+                )
                 $this->_setNewPage();
 
             $old = $this->parsingCss->getOldValues();
