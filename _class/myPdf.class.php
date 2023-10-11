@@ -21,6 +21,10 @@ class HTML2PDF_myPdf extends TCPDF
 
     // nb of segment to build a arc with bezier curv
     const ARC_NB_SEGMENT = 8;
+    /**
+     * @var float|mixed
+     */
+    private mixed $ws;
 
     /**
      * class constructor
@@ -599,7 +603,7 @@ class HTML2PDF_myPdf extends TCPDF
      *
      * @param float   $y
      * @param boolean $resetx Reset the X position
-     * @param boolean $rtloff 
+     * @param boolean $rtloff
      * @access public
      */
     public function SetY($y, $resetx=true, $rtloff=false)
